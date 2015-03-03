@@ -19,6 +19,10 @@ var Link = require('./app/models/link');
 //click model
 var Click = require('./app/models/click');
 
+var expressSession = require('express-session');
+var cookieParser = require('cookie-parser');
+
+
 //app is now assigned to express model, and is invoked
 var app = express();
 
@@ -36,25 +40,28 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //loads default file in public
 app.use(express.static(__dirname + '/public'));
 
+app.use(cookieParser());
+app.use(expressSession({secret:'Jason'}));
 
-app.get('/',
+app.get('/', util.restrict,
 function(req, res) {
   res.render('index');
 });
 
-app.get('/create',
+app.get('/create', util.restrict,
 function(req, res) {
   res.render('index');
 });
 
-app.get('/links',
+app.get('/links', util.restrict,
 function(req, res) {
   Links.reset().fetch().then(function(links) {
     res.send(200, links.models);
+    // res.redirect('/');
   });
 });
 
-app.post('/links',
+app.post('/links', util.restrict,
 function(req, res) {
   var uri = req.body.url;
 
@@ -100,25 +107,14 @@ app.get('/login', function(req, res){
 
 //login - post
 app.post('/login', function(req, res){
-  //check on the server
-    //if username found
-      //verify the password
-        //if correct - 302 redirect
-        //if not - 404
-    //if not 404
   new User({username: req.body.username}).fetch().then(function(found) {
     if (found) {
-      var _username = req.body.username;
-      // console.log(_username);
-      var _password = req.body.password;
-      // console.log(_password);
-      var _hash = found.attributes.password;
-      // console.log(_hash);
-      util.checkPassword(_username, _password, _hash, res);
-      // res.end('loaded');
+      util.checkPassword(req, res, found.attributes.password);
+
+      // req.redirect
     } else {
-      res.writeHead(200);
-      res.end('username does not exist');
+      res.redirect('/login');
+      // res.end('username does not exist');
       // util.hashPerson(req, res);
     }
   });
@@ -134,10 +130,17 @@ app.get('/signup', function(req, res){
 app.post('/signup', function(req, res) {
   new User({username: req.body.username}).fetch().then(function(found) {
     if (found) {
-      res.send(200, found.attributes);
+      res.send(200);
     } else {
+      // res.redirect('/');
       util.hashPerson(req, res);
     }
+  });
+});
+
+app.get('/logout', function(req, res){
+  req.session.destroy(function(){
+    res.redirect('/login');
   });
 });
 /************************************************************/

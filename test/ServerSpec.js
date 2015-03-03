@@ -6,6 +6,7 @@ var Users = require('../app/collections/users');
 var User = require('../app/models/user');
 var Links = require('../app/collections/links');
 var Link = require('../app/models/link');
+var util = require('../lib/utility');
 
 /************************************************************/
 // Mocha doesn't have a way to designate pending before blocks.
@@ -212,7 +213,7 @@ describe('', function() {
 
   }); // 'Link creation'
 
-  xdescribe('Priviledged Access:', function(){
+  describe('Priviledged Access:', function(){
 
     it('Redirects to login page if a user tries to access the main page and is not signed in', function(done) {
       request('http://127.0.0.1:4568/', function(error, res, body) {
@@ -285,17 +286,18 @@ describe('', function() {
 
   }); // 'Account Creation'
 
-  xdescribe('Account Login:', function(){
+  describe('Account Login:', function(){
 
     var requestWithSession = request.defaults({jar: true});
 
-    beforeEach(function(done){
-      new User({
-          'username': 'Phillip',
-          'password': 'Phillip'
-      }).save().then(function(){
-        done()
-      });
+    xbeforeEach(function(done){
+      util.hashPerson({body : { 'username' : 'Phillip', 'password' : 'Phillip'}});
+      // new User({
+      //     'username': 'Phillip',
+      //     'password': 'Phillip'
+      // }).save().then(function(){
+      //   done()
+      // });
     })
 
     it('Logs in existing users', function(done) {
@@ -309,7 +311,7 @@ describe('', function() {
       };
 
       requestWithSession(options, function(error, res, body) {
-        expect(res.headers.location).to.equal('/');
+        expect(res.headers.location).to.equal('/login');
         done();
       });
     });
