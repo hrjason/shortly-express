@@ -92,14 +92,42 @@ function(req, res) {
 // Write your authentication routes here
 /************************************************************/
 
-//sign up
-app.get('/signup', function(req, res){
-  res.render('signup');
-});
 
 //login
 app.get('/login', function(req, res){
   res.render('login');
+});
+
+//login - post
+app.post('/login', function(req, res){
+  //check on the server
+    //if username found
+      //verify the password
+        //if correct - 302 redirect
+        //if not - 404
+    //if not 404
+  new User({username: req.body.username}).fetch().then(function(found) {
+    if (found) {
+      var _username = req.body.username;
+      // console.log(_username);
+      var _password = req.body.password;
+      // console.log(_password);
+      var _hash = found.attributes.password;
+      // console.log(_hash);
+      util.checkPassword(_username, _password, _hash, res);
+      // res.end('loaded');
+    } else {
+      res.writeHead(200);
+      res.end('username does not exist');
+      // util.hashPerson(req, res);
+    }
+  });
+
+});
+
+//sign up
+app.get('/signup', function(req, res){
+  res.render('signup');
 });
 
 //post to create users
