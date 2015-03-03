@@ -104,21 +104,11 @@ app.get('/login', function(req, res){
 
 //post to create users
 app.post('/signup', function(req, res) {
-  new User({username: req.body.username, password: req.body.password}).fetch().then(function(found) {
+  new User({username: req.body.username}).fetch().then(function(found) {
     if (found) {
       res.send(200, found.attributes);
     } else {
-      var user = new User({
-        username: req.body.username,
-        password: req.body.password,
-      });
-
-      // console.log('user: ', user);
-      // console.log('user-save: ', user.save());
-      user.save().then(function(newUser) {
-        Users.add(newUser);
-        res.send(200, newUser);
-      });
+      util.hashPerson(req, res);
     }
   });
 });

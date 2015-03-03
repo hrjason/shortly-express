@@ -6,7 +6,23 @@ var User = db.Model.extend({
   tableName: 'users',
 
   initialize: function(){
-    this.on('creating', function(model, attrs, options){
+    this.on('saving', function(model, attrs, options){
+      // console.log('test');
+      // var password = model.get('password');
+      // console.log(password);
+      // var update = function(result) {
+      //   model.set('password', result);
+      // };
+      // bcrypt.hash(password, null, null, function (err, result) {
+      //   update(result);
+      // });
+
+    });
+  }
+
+});
+
+module.exports = User;
 
       // user.save().then(function(newUser) {
       //   Users.add(newUser);
@@ -21,9 +37,3 @@ var User = db.Model.extend({
       // p.then(function(result){
       //   model.set('password', result);
       // });
-    });
-  }
-
-});
-
-module.exports = User;
