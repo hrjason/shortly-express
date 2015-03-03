@@ -112,6 +112,7 @@ app.post('/signup', function(req, res) {
         username: req.body.username,
         password: req.body.password,
       });
+
       // console.log(user);
 
       user.save().then(function(newUser) {
