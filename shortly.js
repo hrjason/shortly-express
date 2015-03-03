@@ -113,8 +113,8 @@ app.post('/signup', function(req, res) {
         password: req.body.password,
       });
 
-      // console.log(user);
-
+      // console.log('user: ', user);
+      // console.log('user-save: ', user.save());
       user.save().then(function(newUser) {
         Users.add(newUser);
         res.send(200, newUser);

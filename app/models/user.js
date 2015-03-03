@@ -7,17 +7,11 @@ var User = db.Model.extend({
 
   initialize: function(){
     this.on('creating', function(model, attrs, options){
-      var password = model.get('password');
 
-      var update = function(result) {
-        model.set('password', result);
-      };
-
-      bcrypt.hash(password, null, null, function (err, result) {
-        update(result);
-      });
-
-
+      // user.save().then(function(newUser) {
+      //   Users.add(newUser);
+      //   res.send(200, newUser);
+      // });
 
       // var p = new Promise(function (resolve) {
       //   bcrypt.hash(password, null, null, function (err, result) {
