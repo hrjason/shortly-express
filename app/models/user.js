@@ -18,6 +18,7 @@ var User = db.Model.extend({
       });
 
 
+
       // var p = new Promise(function (resolve) {
       //   bcrypt.hash(password, null, null, function (err, result) {
       //     resolve(result);
