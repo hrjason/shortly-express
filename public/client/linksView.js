@@ -5,8 +5,9 @@ Shortly.LinksView = Backbone.View.extend({
     this.collection.on('sync', this.addAll, this);
     this.collection.fetch();
   },
-
+  //Note render isnt being called
   render: function() {
+    //why do they want to empty the dom?
     this.$el.empty();
     return this;
   },

@@ -1,6 +1,6 @@
 Shortly.createLinkView = Backbone.View.extend({
   className: 'creator',
-
+  //relates to what loads on the front end
   template: Templates['create'],
 
   events: {

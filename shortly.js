@@ -1,46 +1,60 @@
+//runs express and assigns to a object variable.
 var express = require('express');
+// loads library utility
 var util = require('./lib/utility');
 var partials = require('express-partials');
+//loads the body
 var bodyParser = require('body-parser');
 
-
+//database is fixe don config
 var db = require('./app/config');
+//collection is users
 var Users = require('./app/collections/users');
+//model is user
 var User = require('./app/models/user');
+//collection is links
 var Links = require('./app/collections/links');
+//model link
 var Link = require('./app/models/link');
+//click model
 var Click = require('./app/models/click');
 
+//app is now assigned to express model, and is invoked
 var app = express();
 
+//sets the express view directory
 app.set('views', __dirname + '/views');
+//view engine is set
 app.set('view engine', 'ejs');
+
+//app use partials whatever that may be
 app.use(partials());
 // Parse JSON (uniform resource locators)
 app.use(bodyParser.json());
 // Parse forms (signup/login)
 app.use(bodyParser.urlencoded({ extended: true }));
+//loads default file in public
 app.use(express.static(__dirname + '/public'));
 
 
-app.get('/', 
+app.get('/',
 function(req, res) {
   res.render('index');
 });
 
-app.get('/create', 
+app.get('/create',
 function(req, res) {
   res.render('index');
 });
 
-app.get('/links', 
+app.get('/links',
 function(req, res) {
   Links.reset().fetch().then(function(links) {
     res.send(200, links.models);
   });
 });
 
-app.post('/links', 
+app.post('/links',
 function(req, res) {
   var uri = req.body.url;
 
@@ -78,8 +92,35 @@ function(req, res) {
 // Write your authentication routes here
 /************************************************************/
 
+//sign up
+app.get('/signup', function(req, res){
+  res.render('signup');
+});
 
+//login
+app.get('/login', function(req, res){
+  res.render('login');
+});
 
+//post to create users
+app.post('/signup', function(req, res) {
+  new User({username: req.body.username, password: req.body.password}).fetch().then(function(found) {
+    if (found) {
+      res.send(200, found.attributes);
+    } else {
+      var user = new User({
+        username: req.body.username,
+        password: req.body.password,
+      });
+      // console.log(user);
+
+      user.save().then(function(newUser) {
+        Users.add(newUser);
+        res.send(200, newUser);
+      });
+    }
+  });
+});
 /************************************************************/
 // Handle the wildcard route last - if all other routes fail
 // assume the route is a short code and try and handle it here.
